@@ -1,0 +1,29 @@
+# AyuLM Tiny Model Configuration
+
+model:
+  name: AyuLM-Tiny
+  architecture: decoder_transformer
+  vocab_size: 256
+  context_length: 128
+  embedding_dim: 128
+  num_layers: 4
+  num_heads: 4
+
+training:
+  batch_size: 4
+  learning_rate: 0.0003
+  epochs: 1
+  optimizer: AdamW
+  initialization: random
+
+dataset:
+  type: text
+  max_samples: 10000
+
+checkpoint:
+  save_enabled: true
+  directory: checkpoints
+
+runtime:
+  device: auto
+  precision: float32
