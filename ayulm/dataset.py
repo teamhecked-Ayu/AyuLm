@@ -8,9 +8,14 @@ class AyuLMDataset(Dataset):
     from encoded text.
     """
 
-    def __init__(self, text, tokenizer, context_length=128):
-        self.tokens = tokenizer.encode(text)
-        self.context_length = context_length
+    def __init__(self, text, tokenizer, context_length=128):if not isinstance(context_length, int) or isinstance(context_length, bool):
+    raise ValueError("context_length must be a positive integer")
+
+if context_length <= 0:
+    raise ValueError("context_length must be positive")
+
+self.tokens = tokenizer.encode(text)
+self.context_length = context_length
 
         if len(self.tokens) <= context_length:
             raise ValueError(
