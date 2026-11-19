@@ -9,7 +9,7 @@ import yaml
 from torch.utils.data import DataLoader
 
 from ayulm.model import AyuLM, AyuLMConfig
-from ayulm.tokenizer import AyuLMTokenizer
+from ayulm.tokenizer_loader import load_tokenizer
 from ayulm.dataset import AyuLMDataset
 
 
@@ -21,6 +21,7 @@ def train(config_path, data_path, max_steps):
     training_settings = settings["training"]
     runtime_settings = settings.get("runtime", {})
     checkpoint_settings = settings.get("checkpoint", {})
+    tokenizer_settings = settings.get("tokenizer", {})
 
     seed = settings.get("seed", 42)
     random.seed(seed)
@@ -37,7 +38,10 @@ def train(config_path, data_path, max_steps):
     device = torch.device(device_name)
     print("Training device:", device)
 
-    tokenizer = AyuLMTokenizer()
+    tokenizer = load_tokenizer(tokenizer_settings)
+
+    print("Tokenizer:", tokenizer_settings.get("type", "byte"))
+    print("Tokenizer vocabulary size:", tokenizer.vocab_size)
 
     config = AyuLMConfig(
         vocab_size=tokenizer.vocab_size,
@@ -110,6 +114,10 @@ def train(config_path, data_path, max_steps):
                 batches += 1
 
         model.train()
+
+        if batches == 0:
+            raise ValueError("Validation dataset produced no batches")
+
         return total_loss / batches
 
     model.train()
@@ -163,6 +171,14 @@ def train(config_path, data_path, max_steps):
                 "model_state_dict": model.state_dict(),
                 "optimizer_state_dict": optimizer.state_dict(),
                 "config": vars(config),
+                "tokenizer": {
+                    "type": tokenizer_settings.get("type", "byte"),
+                    "model_path": tokenizer_settings.get(
+                        "model_path",
+                        "tokenizers/ayulm_bpe.model",
+                    ),
+                    "vocab_size": tokenizer.vocab_size,
+                },
                 "step": step,
                 "seed": seed,
             },
