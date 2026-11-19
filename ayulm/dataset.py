@@ -1,3 +1,4 @@
+
 import torch
 from torch.utils.data import Dataset
 
@@ -8,14 +9,18 @@ class AyuLMDataset(Dataset):
     from encoded text.
     """
 
-    def __init__(self, text, tokenizer, context_length=128):if not isinstance(context_length, int) or isinstance(context_length, bool):
-    raise ValueError("context_length must be a positive integer")
+    def __init__(self, text, tokenizer, context_length=128):
+        if (
+            not isinstance(context_length, int)
+            or isinstance(context_length, bool)
+            or context_length <= 0
+        ):
+            raise ValueError(
+                "context_length must be a positive integer"
+            )
 
-if context_length <= 0:
-    raise ValueError("context_length must be positive")
-
-self.tokens = tokenizer.encode(text)
-self.context_length = context_length
+        self.tokens = tokenizer.encode(text)
+        self.context_length = context_length
 
         if len(self.tokens) <= context_length:
             raise ValueError(
@@ -26,6 +31,9 @@ self.context_length = context_length
         return len(self.tokens) - self.context_length
 
     def __getitem__(self, index):
+        if index < 0 or index >= len(self):
+            raise IndexError("Dataset index out of range")
+
         start = index
         end = start + self.context_length
 
