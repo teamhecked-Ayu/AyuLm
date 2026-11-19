@@ -44,3 +44,24 @@ def test_unsupported_tokenizer():
 def test_invalid_settings():
     with pytest.raises(TypeError):
         load_tokenizer("byte")
+
+def test_empty_bpe_model_path():
+    with pytest.raises(ValueError):
+        load_tokenizer({
+            "type": "bpe",
+            "model_path": "",
+        })
+
+
+def test_non_string_tokenizer_type():
+    with pytest.raises(ValueError):
+        load_tokenizer({
+            "type": 123,
+        })
+
+
+def test_none_tokenizer_type():
+    with pytest.raises(ValueError):
+        load_tokenizer({
+            "type": None,
+        })
