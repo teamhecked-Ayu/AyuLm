@@ -8,7 +8,7 @@ from ayulm.bpe_tokenizer import AyuLMBPETokenizer
 
 @pytest.fixture
 def tokenizer():
-    model_path = Path("ayulm_tokenizer_v3.model")
+    model_path = Path("tokenizers/ayulm_bpe.model")
 
     if not model_path.exists():
         pytest.skip("Experimental tokenizer model not available")
