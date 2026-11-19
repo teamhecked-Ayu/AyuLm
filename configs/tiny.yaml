@@ -27,3 +27,7 @@ checkpoint:
 runtime:
   device: auto
   precision: float32
+  
+tokenizer:
+  type: byte
+  model_path: tokenizers/ayulm_bpe.model
